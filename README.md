@@ -3,7 +3,7 @@
 ```
 ~ $ git clone https://github.com/perry0513/fraig.git
 ~ $ cd fraig
-~/fraig $ make-mac	// (or make-linux based on the underlying OS)
+~/fraig $ make-mac	      // or 'make-linux' based on the underlying OS
 ~/fraig $ make
 ```
 - An executable `fraig` should appear after executing the above commands.

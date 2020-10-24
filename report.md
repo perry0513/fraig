@@ -1,5 +1,4 @@
-# DSnP: Functional Reduced AIG (FRAIG)
--
+# DSnP: Functional Reduced And-Inverter Graphs (FRAIG)
 ### Table of Contents
 
 1. Structure and difference between Hw6
@@ -49,7 +48,6 @@ To determine the difference between inverted and non-inverted, I stored the gate
 For `_floatFaninList`, `_unusedList`, and `_DFSList`, I decided to store them in gate IDs because there's no need to know whether they are inverted.
 The commented lines are members newly added. They will be indicated later in the report.
 ### `class CirGate` and its derived class
--
 
 ```c++
 class CirGate

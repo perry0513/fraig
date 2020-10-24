@@ -1,26 +1,26 @@
-#DSnP: Functional Reduced AIG (FRAIG)#
--
-###Table of Contents###
+# DSnP Final Project: Functional Reduced And-Inverter Graphs (FRAIG)
+### Table of Contents
 
-1. Structure and difference between Hw6
-	+ class CirMgr
-	+ class CirGate and its derived class
-2. Trivial optimizations
-	+ Sweep
-	+ Optimize
-	+ Strash
-3. Simulation
-	+ FecGrp
-	+ SimValue
-	+ Find FEC groups
-4. Fraig
-5. Performance
-6. Improvements
+1. [Structure and difference between Hw6](#structure-and-difference-between-Hw6)
+	+ [class CirMgr](#class-cirmgr)
+	+ [class CirGate and its derived class](#class-cirgate-and-its-derived-class)
+2. [Trivial optimizations](#trivial-optimizations)
+	+ [Sweep](#cirmgr-sweep())
+	+ [Optimize](#cirmgr-optimize())
+	+ [Strash](#cirmgr-strash())
+3. [Simulation](#simulation)
+	+ [FecGrp](#class-fecgrp)
+	+ [SimValue](#class-simvalue)
+	+ [Simulate](#cirmgr-simulate())
+	+ [Find FEC groups](#find-fec-groups)
+4. [Fraig](#fraig)
+5. [Experiments](#experiments)
+6. [Improvements](#improvements)
 
 
-##1. Structure and difference between Hw6##
+## 1. Structure and difference between Hw6
 
-###`class CirMgr`###
+### `class CirMgr`
 
 ```c++
 class CirMgr
@@ -48,8 +48,7 @@ In Hw6, the above members were stored in CirMgr.
 To determine the difference between inverted and non-inverted, I stored the gates in literal IDs, which are the IDs in the AIGER files. One of the benefits is that there is no need to store an additional boolean vector or store gates as `CirGate*, bool`pairs. Literal IDs alone can indicate the ID of gates and whether they are inverted.
 For `_floatFaninList`, `_unusedList`, and `_DFSList`, I decided to store them in gate IDs because there's no need to know whether they are inverted.
 The commented lines are members newly added. They will be indicated later in the report.
-###`class CirGate` and its derived class###
--
+### `class CirGate` and its derived class
 
 ```c++
 class CirGate
@@ -79,8 +78,8 @@ There are five derived class from class`CirGate`:
 Each of them contains members which are not necessarily needed by others.
 They will also be mentioned in detail below.
 
-##2. Trivial optimizations###
-###`CirMgr::sweep()`###
+## 2. Trivial optimizations
+### `CirMgr::sweep()`
 
 ```c++
 CirMgr::sweep()
@@ -106,7 +105,7 @@ Sweep the gates in `_unusedList`.
 My approach is to first mark all the gates in `_DFSList`, and then DFS from the unused gates. If the fanin of the current gate is in `_DFSList`, the sweeping operation should be stopped by there. 
 One of the benefits is that in some cases if there is only a small part of gates to be swept, the operation can be done slightly quicker than iterating through all the gates twice. There is a more efficient approach, but because the time they spent don't differ much, I decide not to implement it. It will be mentioned  in the last part. There is no need to update `_DFSList` because it won't change.
 
-###`CirMgr::optimize()`###
+### `CirMgr::optimize()`
 
 ```c++
 CirMgr::optimize()
@@ -120,7 +119,7 @@ Optimize all the gates in `_DFSList`.
 There are four cases to be optimize: `a & a = a`, `a & !a = 0`, `a & 0 = 0`, `a & 1 = a`
 I determine the cases in the order above. If literal IDs are identical, it belongs to the first case. Otherwise, if gate IDs (literal ID / 2) are the same but the literal IDs are different, it belongs to the second case. The operations are trivial and a bit complicated; therefore, it will not be included in this report.
 
-###`CirMgr::strash()`###
+### `CirMgr::strash()`
 
 ```c++
 CirMgr::strash()
@@ -151,8 +150,8 @@ Therefore, the rule should be like this:
 > **When the gate is not the base of its fecgroup, prove and merge it. If it is, skip and continue.**
 
 
-##3. Simulation##
-###`class FecGrp`###
+## 3. Simulation
+### `class FecGrp`
 ```c++
 class FecGrp
 {
@@ -169,7 +168,7 @@ private:
 ```
 `Class FecGrp` is basically a vector storing literal IDs, however, it includes an additional data member `_base`. This `_base` member will be set as the gate first searched in `_DFSList`. The reason to have this member is that we have to ensure the gate we are merging is at the bottommost of the circuit. In order to get the base of a FecGrp, I choose to store another member in `class CirGate`, which is `_pos`. `_pos` will be updated every time after the simulation process or during fraig. Details will be explained below.
 
-###`class SimValue`###
+### `class SimValue`
 ```c++
 class SimValue
 {
@@ -191,7 +190,7 @@ private:
 
 ```
 Before simulation, we have to create a simulation value (simvalue). Because 64-bit machines are far more popular than 32-bit machines, I decided to make `SimValue` a `size_t`. To make it convenient and clean, I decided to create `class SimValue` and overload several operators. This not only make the code neater and more readable, but also let me code more intuitively. (e.g. `!a & !b` == `!(a | b)`)
-###`CirMgr::simulate()`###
+### `CirMgr::simulate()`
 ```c++
 CirMgr::simulate()
 {
@@ -213,7 +212,7 @@ CirMgr::simulateCircuit()
 ```
 The first step is to get the inputs and simulate the circuit.
 To simulate the circuit, simply plug the simvalues into the PIs. After iterating through `_DFSList` and `_POList`, the circuit will easily be simulated (because it is of post order).
-###Find FEC groups###
+### Find FEC groups
 Dividing all the gates into different FEC groups requires more thinking.
 Generally, we can differ the gates by identifying their simvalues.
 If they don't share the same simvalue, they belong to different FEC groups and will be separated forever.
@@ -290,7 +289,7 @@ Same as the above, collect all the groups and add them all back to `_fecGrps`.
 
 After reaching the threshold, insert all the `(gateID, FecGrp*)` pair into a hash to make the searching time complexity constant time. This ends the simulation process.
 
-##3. Fraig##
+## 3. Fraig
 As mentioned above, the fraig process utilizes the property that the gate we are merging will have the least possible fanin cone. We can observe this by going through a circuit once.
 
 1. If a gate is a base of a group, there is no need to merge because merging now might end in a large fanin cone and result in huge proving time. So skip it.
@@ -299,7 +298,7 @@ As mentioned above, the fraig process utilizes the property that the gate we are
 By following these two rules, it can be seen that the fanin cone of the gate we are merging will be the smallest possible. There must be no more gate to be merged in the fanin cone. Now, let's go through the details.
 
 
-###`CirMgr::fraig()`###
+### `CirMgr::fraig()`
 ```c++
 void CirMgr::fraig()
 {
@@ -339,7 +338,7 @@ At the end of the fraig operation, the `endFraig()` method will reset all the va
 
 That's all for my algorithm and implementation for fraig. :)
 
-##Performance##
+## Experiments
 
 `cirSIMulate -r`
 
@@ -387,7 +386,7 @@ That's all for my algorithm and implementation for fraig. :)
 | sim13           |  145.05 M |98.35s
 
 
-##Improvements##
+## Improvements
 1. The sweeping method indicated above is as follow:
     + no need to go through the circuit and mark the gates in `_DFSList` first
     + start sweeping from the unused gates

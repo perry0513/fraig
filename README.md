@@ -23,3 +23,6 @@
 
 ## Benchmarks
 - Some testing and industrial benchmarks are in `tests.fraig/`.
+
+## More information
+- For more implementation and structural details, please see [report](./report.md).

@@ -8,8 +8,8 @@
 ```
 - An executable `fraig` should appear after executing the above commands.
 
-## USAGE
-   - After executing `fraig`, there are multiple operations you could do:
+## Usage
+- After executing `fraig`, there are multiple commands you can play execute:
 1. `CIRRead`: reads in benchmarks in aag format
 2. `CIRPrint`: print circuit information
 3. `CIRSWeep`: perform unused gate sweeping
@@ -20,3 +20,6 @@
 8. `CIRWrite`: write the netlist into aag file
 9. `usage`: report runtime and memory usage
 10. `help`: For more commands and information, please type `help`
+
+## Benchmarks
+- Some testing and industrial benchmarks are in `tests.fraig/`.

@@ -1,20 +1,20 @@
-# DSnP: Functional Reduced And-Inverter Graphs (FRAIG)
+# DSnP Final Project: Functional Reduced And-Inverter Graphs (FRAIG)
 ### Table of Contents
 
-1. Structure and difference between Hw6
-	+ class CirMgr
-	+ class CirGate and its derived class
-2. Trivial optimizations
-	+ Sweep
-	+ Optimize
-	+ Strash
-3. Simulation
-	+ FecGrp
-	+ SimValue
-	+ Find FEC groups
-4. Fraig
-5. Performance
-6. Improvements
+1. [Structure and difference between Hw6](#structure-and-difference-between-Hw6)
+	+ [class CirMgr](#class-cirmgr)
+	+ [class CirGate and its derived class](#class-cirgate-and-its-derived-class)
+2. [Trivial optimizations](#trivial-optimizations)
+	+ [Sweep](#sweep)
+	+ [Optimize](#optimize)
+	+ [Strash](#strash)
+3. [Simulation](#simulation)
+	+ [FecGrp](#fecgrp)
+	+ [SimValue](#simvalue)
+	+ [Find FEC groups](#find-fec-groups)
+4. [Fraig](#fraig)
+5. [Experiments](#experiments)
+6. [Improvements](#improvements)
 
 
 ## 1. Structure and difference between Hw6
@@ -337,7 +337,7 @@ At the end of the fraig operation, the `endFraig()` method will reset all the va
 
 That's all for my algorithm and implementation for fraig. :)
 
-## Performance
+## Experiments
 
 `cirSIMulate -r`
 

@@ -5,12 +5,13 @@
 	+ [class CirMgr](#class-cirmgr)
 	+ [class CirGate and its derived class](#class-cirgate-and-its-derived-class)
 2. [Trivial optimizations](#trivial-optimizations)
-	+ [Sweep](#sweep)
-	+ [Optimize](#optimize)
-	+ [Strash](#strash)
+	+ [Sweep](#cirmgr::sweep())
+	+ [Optimize](#cirmgr::optimize())
+	+ [Strash](#cirmgr::strash())
 3. [Simulation](#simulation)
-	+ [FecGrp](#fecgrp)
-	+ [SimValue](#simvalue)
+	+ [FecGrp](#class-fecgrp)
+	+ [SimValue](#class-simvalue)
+	+ [Simulate](#cirmgr::simulate())
 	+ [Find FEC groups](#find-fec-groups)
 4. [Fraig](#fraig)
 5. [Experiments](#experiments)
@@ -211,7 +212,7 @@ CirMgr::simulateCircuit()
 ```
 The first step is to get the inputs and simulate the circuit.
 To simulate the circuit, simply plug the simvalues into the PIs. After iterating through `_DFSList` and `_POList`, the circuit will easily be simulated (because it is of post order).
-###Find FEC groups###
+### Find FEC groups
 Dividing all the gates into different FEC groups requires more thinking.
 Generally, we can differ the gates by identifying their simvalues.
 If they don't share the same simvalue, they belong to different FEC groups and will be separated forever.
